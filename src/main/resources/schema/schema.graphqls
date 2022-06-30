@@ -1,7 +1,25 @@
 type Query {
-    events: [String!]
+    #! means must have
+    #must have event in list, and list is also must
+    events: [Event!]!
 }
 
 type Mutation {
-    createEvent(name: String) : String
+    createEvent(eventInput: EventInput!) : Event!
+}
+
+input EventInput {
+    id: ID!
+    title: String!
+    description: String!
+    price: Float!
+    date: String!
+}
+
+type Event {
+    id: ID!
+    title: String!
+    description: String!
+    price: Float!
+    date: String!
 }
