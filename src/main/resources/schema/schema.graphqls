@@ -6,20 +6,44 @@ type Query {
 
 type Mutation {
     createEvent(eventInput: EventInput!) : Event!
+    createUser(userInput: UserInput!) : User!
 }
 
+#input by user
 input EventInput {
     id: ID!
     title: String!
     description: String!
     price: Float!
     date: String!
+    createId: Int!
 }
 
+#event returned when query
 type Event {
     id: ID!
     title: String!
     description: String!
     price: Float!
     date: String!
+    creator: User!
+}
+
+type User {
+    id: ID!
+    email: String!
+
+    #password is not essential, sometimes no need to pass to frontend
+    password: String
+
+    #if the list is not null, there must be events in it
+    #acquire events created by a user
+    createdEvent: [Event!]
+}
+
+#when user create account, password is essential
+input UserInput {
+    id: ID!
+    email: String!
+    password: String!
 }

@@ -23,6 +23,7 @@ public class EventEntity {
     private float price;
     //Date type can be stored in postgresql
     private Date date;
+    private Integer creatorID;
 
     //convert DTO to Data Entity(for DB)
     public static EventEntity fromEventInput(EventInput input) {

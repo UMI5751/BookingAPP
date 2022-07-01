@@ -13,8 +13,13 @@ public class Event {
     private String description;
     private float price;
     private String date;
+    //which user create this event
+    private User creator;
 
-    //create static method: transfer EventEntity to Event(DTO)
+    //temporary field
+    private Integer creatorId;
+
+    //create factory method: transfer EventEntity to Event(DTO)
     public static Event fromEntity(EventEntity eventEntity) {
         Event event = new Event();
         event.setId(eventEntity.getId().toString());
@@ -22,6 +27,7 @@ public class Event {
         event.setDescription(eventEntity.getDescription());
         event.setPrice(eventEntity.getPrice());
         event.setDate(DateUtil.formatDateInISOString(eventEntity.getDate()));
+        event.setCreatorId(eventEntity.getCreatorID());
         return event;
     }
 }
