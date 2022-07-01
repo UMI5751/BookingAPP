@@ -5,9 +5,8 @@ import com.example.BookingAPP.entity.EventEntity;
 import com.example.BookingAPP.entity.UserEntity;
 import com.example.BookingAPP.mapper.EventEntityMapper;
 import com.example.BookingAPP.mapper.UserEntityMapper;
-import com.example.BookingAPP.type.Event;
-import com.example.BookingAPP.type.User;
-import com.example.BookingAPP.type.UserInput;
+import com.example.BookingAPP.type.*;
+import com.example.BookingAPP.util.TokenUtil;
 import com.netflix.graphql.dgs.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +36,30 @@ public class UserDataFetcher {
                 .map(User::fromEntity).toList();
         return userList;
     }
+
+    //extend UserDataFetcher class to implement login function.
+    @DgsQuery
+    public AuthData login(@InputArgument LoginInput loginInput) {
+        UserEntity userEntity = this.findUserByEmail(loginInput.getEmail());
+        if (userEntity == null) {
+            throw new RuntimeException("This email has not been registered");
+        }
+        boolean match = passwordEncoder.matches(loginInput.getPassword(), userEntity.getPassword());
+        if (!match) {
+            throw new RuntimeException("Incorrect password!");
+        }
+
+        String token = TokenUtil.signToken(userEntity.getId(), 1);
+
+        AuthData authData = new AuthData()
+                .setUserId(userEntity.getId())
+                .setToken(token)
+                .setTokenExpiration(1);
+
+        return authData;
+
+    }
+
 
     @DgsMutation
     public User createUser(@InputArgument UserInput userInput) {
@@ -75,6 +98,14 @@ public class UserDataFetcher {
         if (userEntityMapper.selectCount(queryWrapper) >= 1) {
             throw new RuntimeException("Email already registered");
         }
+    }
+
+    //find the user by email
+    private UserEntity findUserByEmail(String email) {
+        QueryWrapper<UserEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(UserEntity::getEmail, email);
+        //if found, return one
+        return userEntityMapper.selectOne(queryWrapper);
     }
 
 

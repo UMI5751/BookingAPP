@@ -2,6 +2,10 @@ type Query {
     #! means must have
     #must have event in list, and list is also must
     events: [Event!]!
+    users: [User!]!
+    #accept loginInput as parameter, and return AuthData
+    #search AuthData by LoginInput provided by user
+    login(loginInput: LoginInput!): AuthData
 }
 
 type Mutation {
@@ -18,6 +22,19 @@ input EventInput {
     date: String!
     createId: Int!
 }
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+#if login successfully, return AuthData
+type AuthData {
+    userID: ID!
+    token: String!
+    tokenExpiration: Int!
+}
+
 
 #event returned when query
 type Event {
