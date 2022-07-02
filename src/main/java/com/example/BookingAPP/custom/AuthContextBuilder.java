@@ -29,6 +29,7 @@ public class AuthContextBuilder implements DgsCustomContextBuilderWithRequest {
         this.userEntityMapper = userEntityMapper;
     }
 
+    //use build method to acquire and parse HTTP header and build context
     @Override
     public Object build(@Nullable Map map, @Nullable HttpHeaders httpHeaders, @Nullable WebRequest webRequest) {
         log.info("building Auth Context...");

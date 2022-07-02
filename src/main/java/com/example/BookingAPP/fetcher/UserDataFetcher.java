@@ -1,6 +1,7 @@
 package com.example.BookingAPP.fetcher;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.BookingAPP.custom.AuthContext;
 import com.example.BookingAPP.entity.EventEntity;
 import com.example.BookingAPP.entity.UserEntity;
 import com.example.BookingAPP.mapper.EventEntityMapper;
@@ -8,6 +9,8 @@ import com.example.BookingAPP.mapper.UserEntityMapper;
 import com.example.BookingAPP.type.*;
 import com.example.BookingAPP.util.TokenUtil;
 import com.netflix.graphql.dgs.*;
+import com.netflix.graphql.dgs.context.DgsContext;
+import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -29,7 +32,13 @@ public class UserDataFetcher {
 
     //solver for select all Users in DB
     @DgsQuery
-    public List<User> users() {
+    public List<User> users(DataFetchingEnvironment dfe) {
+        //only authenticated user is allowed to query all users in DB
+        //Dgs will help to acquire authContext built by AuthContextBuilder
+        AuthContext authContext = DgsContext.getCustomContext(dfe);
+        //if not authenticated, it will throw exception
+        authContext.ensureAuthenticated();
+
         //select all userEntity
         List<UserEntity> userEntityList = userEntityMapper.selectList(null);
         List<User> userList = userEntityList.stream()

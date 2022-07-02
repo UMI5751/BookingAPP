@@ -9,5 +9,4 @@ public class EventInput {
     private String description;
     private float price;
     private String date;
-    private Integer creatorID;
 }

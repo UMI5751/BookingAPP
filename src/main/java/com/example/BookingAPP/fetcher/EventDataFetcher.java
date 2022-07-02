@@ -1,6 +1,7 @@
 package com.example.BookingAPP.fetcher;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.BookingAPP.custom.AuthContext;
 import com.example.BookingAPP.entity.EventEntity;
 import com.example.BookingAPP.entity.UserEntity;
 import com.example.BookingAPP.mapper.EventEntityMapper;
@@ -9,6 +10,9 @@ import com.example.BookingAPP.type.Event;
 import com.example.BookingAPP.type.EventInput;
 import com.example.BookingAPP.type.User;
 import com.netflix.graphql.dgs.*;
+import com.netflix.graphql.dgs.context.DgsContext;
+import com.netflix.graphql.dgs.context.DgsCustomContextBuilderWithRequest;
+import graphql.schema.DataFetchingEnvironment;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -53,8 +57,15 @@ public class EventDataFetcher {
     //add @InputArgument before parameter: indicate it is graphQl input parameter(according to schema.graphqls)
     //change data in DB
     @DgsMutation
-    public Event createEvent(@InputArgument(name = "eventInput") EventInput input) {
+    public Event createEvent(@InputArgument(name = "eventInput") EventInput input, DataFetchingEnvironment dfe) {
+        //Dgs will help to acquire authContext built by AuthContextBuilder
+        AuthContext authContext = DgsContext.getCustomContext(dfe);
+        //if not authenticated, it will throw exception
+        authContext.ensureAuthenticated();
+
         EventEntity newEventEntity = EventEntity.fromEventInput(input);
+        //get CreatorID directly from authContext by parsing token
+        newEventEntity.setCreatorID(authContext.getUserEntity().getId());
 
         //insert this new eventEntity to postgresql DB (by mybatis)
         eventEntityMapper.insert(newEventEntity);

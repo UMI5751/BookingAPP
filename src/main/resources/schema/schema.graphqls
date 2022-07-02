@@ -20,7 +20,6 @@ input EventInput {
     description: String!
     price: Float!
     date: String!
-    createId: Int!
 }
 
 input LoginInput {
