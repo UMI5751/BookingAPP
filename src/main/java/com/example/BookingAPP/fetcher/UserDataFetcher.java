@@ -33,7 +33,8 @@ public class UserDataFetcher {
     //solver for select all Users in DB
     @DgsQuery
     public List<User> users(DataFetchingEnvironment dfe) {
-        //only authenticated user is allowed to query all users in DB
+        //this code is for protecting operations only for authenticated users. only authenticated user is allowed to
+        // query all users in DB
         //Dgs will help to acquire authContext built by AuthContextBuilder
         AuthContext authContext = DgsContext.getCustomContext(dfe);
         //if not authenticated, it will throw exception
