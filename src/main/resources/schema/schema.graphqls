@@ -6,11 +6,14 @@ type Query {
     #accept loginInput as parameter, and return AuthData
     #search AuthData by LoginInput provided by user
     login(loginInput: LoginInput!): AuthData
+    booking: [Booking!]!
 }
 
 type Mutation {
     createEvent(eventInput: EventInput!) : Event!
     createUser(userInput: UserInput!) : User!
+    bookEvent(eventId: ID!): Booking!
+    cancelBooking(bookingId: ID!): Event!
 }
 
 #input by user
@@ -55,6 +58,7 @@ type User {
     #if the list is not null, there must be events in it
     #acquire events created by a user
     createdEvent: [Event!]
+    booking: [Booking!]
 }
 
 #when user create account, password is essential
@@ -62,4 +66,12 @@ input UserInput {
     id: ID!
     email: String!
     password: String!
+}
+
+type Booking {
+    id: ID!
+    event: Event!
+    user: User!
+    createdAt: String!
+    updatedAt: String!
 }

@@ -20,3 +20,19 @@ CREATE table tb_event (
     constraint fk_created_id foreign key (creator_id) references tb_user(id)
 );
 
+create table tb_booking (
+    id serial,
+    user_id integer not null,
+    event_id integer not null,
+    created_at timestamp not null,
+    updated_at timestamp not null,
+    primary key (id),
+    constraint fk_user_id foreign key (user_id) references tb_user(id),
+    constraint fk_event_id foreign key (event_id) references tb_event(id)
+);
+
+-- create index on user_id
+create index idx_user_id on tb_booking(user_id);
+
+
+
